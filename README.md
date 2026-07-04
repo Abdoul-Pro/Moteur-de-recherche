@@ -1,9 +1,10 @@
-# Moteur-de-recherche
 # Atlas
 
-**Moteur de recherche de documents historiques**  
+**Moteur de recherche de documents historiques — Multiplateforme**
 
-Atlas est une application de bureau permettant d'indexer, rechercher et consulter des documents historiques. Elle utilise l'algorithme **TF-IDF** (Term Frequency–Inverse Document Frequency) couplé à la **similarité cosinus** pour retrouver les passages les plus pertinents dans un corpus de documents.
+Atlas est une application multiplateforme permettant d'indexer, rechercher et consulter des documents historiques. Elle utilise l'algorithme **TF-IDF** couplé à la **similarité cosinus** pour retrouver les passages les plus pertinents dans un corpus de documents.
+
+Supporte **Windows** (CustomTkinter) et **Android** (Kivy) avec une seule base de code Python.
 
 ---
 
@@ -16,17 +17,18 @@ Atlas est une application de bureau permettant d'indexer, rechercher et consulte
 | **Import de documents** | Import de fichiers `.txt`, `.pdf`, `.docx` avec extraction automatique du contenu |
 | **Saisie manuelle** | Création directe de documents avec métadonnées |
 | **Indexation** | Indexation TF-IDF en temps réel avec barre de progression et journal |
-| **Statistiques** | Nombre de documents, passages, vocabulaire, temps moyen de recherche |
+| **Analyse** | Tableau de bord avec métriques, graphiques et distribution des documents |
 | **Historique** | Consultation de toutes les recherches effectuées |
 | **Export** | Export CSV ou JSON avec choix de l'emplacement de sauvegarde |
-| **Sauvegarde** | Copie de sécurité de la base de données SQLite |
+| **Sauvegarde** | Gestion complète des sauvegardes : création avec nom personnalisé, restauration, suppression |
+| **Réinitialiser** | Vider la base de données et repartir à zéro pour des recherches personnelles |
 | **À propos** | Informations sur l'équipe et les technologies utilisées |
 
 ---
 
-## Aperçu
+## Aperçu de l'interface
 
-L'application propose une interface en **mode sombre** avec un thème navy/or, une barre latérale de navigation et des pages scrollables.
+### Windows (CustomTkinter)
 
 ```
 ┌──────────────┬────────────────────────────────────────────┐
@@ -42,10 +44,34 @@ L'application propose une interface en **mode sombre** avec un thème navy/or, u
 │  📄 Importer │     Auteur · Période · Région              │
 │  📤 Export   │                                            │
 │  💾 Sauveg.  │                                            │
+│  🗑️ Réinit.  │                                            │
 │  ℹ️ À propos │                                            │
 │──────────────│  ← 1  2  3  →                              │
 │ ● Opérationnel│                                            │
 └──────────────┴────────────────────────────────────────────┘
+```
+
+### Android (Kivy)
+
+```
+┌─────────────────────────────────┐
+│  🧭 Atlas                       │
+│  Explorer l'histoire.           │
+│─────────────────────────────────│
+│  [Rechercher...        ] [🔍]   │
+│─────────────────────────────────│
+│  📚 Documents     📄 Passages   │
+│       66              126       │
+│─────────────────────────────────│
+│  📋 Recherches    ⏱️ Temps moy. │
+│       0               0 ms     │
+│─────────────────────────────────│
+│  [🔍 Recherche]  [🔬 Avancée]   │
+│  [📊 Analyse]    [📋 Historique]│
+│  [⚙️ Indexation] [💾 Sauvegarde]│
+│  [📄 Importer]   [📤 Export]    │
+│  [🗑️ Réinit.]    [ℹ️ À propos]  │
+└─────────────────────────────────┘
 ```
 
 ---
@@ -57,11 +83,12 @@ L'application propose une interface en **mode sombre** avec un thème navy/or, u
 - **Python 3.10** ou supérieur
 - **pip** (gestionnaire de paquets)
 
-### Étapes
+### Windows
 
 ```bash
 # 1. Cloner le dépôt
 git clone https://github.com/Abdoul-Pro/Moteur-de-recherche.git
+cd Moteur-de-recherche
 
 # 2. Installer les dépendances
 pip install -r requirements.txt
@@ -70,7 +97,21 @@ pip install -r requirements.txt
 python main.py
 ```
 
-> Au premier lancement, les documents de démonstration sont chargés automatiquement dans la base de données.
+### Android
+
+```bash
+# Via WSL (Windows Subsystem for Linux)
+wsl --install -d Ubuntu
+# Après redémarrage, dans Ubuntu :
+sudo apt update && sudo apt install -y python3 python3-pip
+pip3 install buildozer
+buildozer android debug
+```
+
+Ou exécuter directement depuis Windows :
+```batch
+build_apk.bat
+```
 
 ---
 
@@ -78,50 +119,60 @@ python main.py
 
 ```
 atlas/
-├── main.py                         # Point d'entrée de l'application
-├── config.py                       # Configuration générale (chemins, constantes)
-├── requirements.txt                # Dépendances Python
-├── README.md                       # Ce fichier
+├── main.py                          # Point d'entrée (détection Windows/Android)
+├── config.py                        # Configuration centralisée (chemins, constantes)
 │
-├── src/
-│   ├── core/
-│   │   ├── preprocessing.py        # Nettoyage, tokenisation, stemming (NLP)
-│   │   ├── preprocessor.py         # Préprocesseur alternatif (NLTK)
-│   │   ├── indexer.py              # Indexation TF-IDF avec scikit-learn
-│   │   ├── engine.py               # Moteur de recherche (DB-based)
-│   │   ├── search_engine.py        # Moteur de recherche (in-memory)
-│   │   └── statistics.py           # Collecte et affichage des statistiques
-│   │
-│   ├── database/
-│   │   ├── database.py             # Schéma SQL, requêtes CRUD
-│   │   └── connection.py           # Gestionnaire de connexion SQLite
-│   │
-│   ├── ui/
-│   │   ├── theme.py                # Thème global, couleurs, polices, helpers
-│   │   ├── components/
-│   │   │   ├── sidebar.py          # Barre latérale de navigation
-│   │   │   └── widgets.py          # SearchBar, ResultCard, StatCard, Pagination
-│   │   └── pages/
-│   │       ├── home.py             # Page d'accueil
-│   │       ├── search.py           # Page de résultats de recherche
-│   │       ├── advanced.py         # Recherche avancée avec filtres
-│   │       ├── analytics.py        # Tableau d'analyse et métriques
-│   │       ├── history.py          # Historique des recherches
-│   │       ├── indexing.py         # Page d'indexation avec progression
-│   │       ├── import_doc.py       # Import de documents (fichier + manuel)
-│   │       ├── document.py         # Consultation d'un document
-│   │       └── about.py            # Page À propos
-│   │
-│   └── utils/
-│       ├── constants.py            # Constantes partagées
-│       └── datetime.py             # Utilitaires de date/heure
+├── core/                            # Logique métier (partagée)
+│   ├── preprocessing.py             # Nettoyage, tokenisation, stemming (NLP)
+│   ├── preprocessor.py              # Préprocesseur NLTK
+│   ├── indexer.py                   # Indexation TF-IDF avec scikit-learn
+│   └── engine.py                    # Moteur de recherche DB-based
+│
+├── database/                        # Couche d'accès aux données (partagée)
+│   ├── connection.py                # Gestionnaire de connexion SQLite
+│   └── database.py                  # Schéma SQL, CRUD et réinitialisation
+│
+├── utils/                           # Utilitaires (partagés)
+│   └── datetime.py                  # Utilitaires de date/heure
+│
+├── windows/                         # Interface Windows (CustomTkinter)
+│   ├── app.py                       # Application principale Windows
+│   ├── theme.py                     # Thème et couleurs
+│   ├── components/
+│   │   ├── sidebar.py               # Barre latérale de navigation
+│   │   └── widgets.py               # SearchBar, ResultCard, Pagination
+│   └── pages/
+│       ├── home.py                  # Page d'accueil
+│       ├── search.py                # Page de résultats de recherche
+│       ├── advanced.py              # Recherche avancée avec filtres
+│       ├── analytics.py             # Tableau d'analyse
+│       ├── history.py               # Historique des recherches
+│       ├── indexing.py              # Page d'indexation
+│       ├── import_doc.py            # Import de documents
+│       ├── document.py              # Consultation d'un document
+│       ├── sauvegarde.py            # Gestion des sauvegardes
+│       ├── reset_db.py              # Réinitialisation de la base
+│       └── about.py                 # Page À propos
+│
+├── android/                         # Interface Android (Kivy)
+│   ├── main.py                      # Application principale Android
+│   ├── theme.py                     # Thème et couleurs
+│   └── screens/                     # Écrans Android
 │
 ├── data/
-│   ├── atlas.db                    # Base de données SQLite
-│   └── index/                      # Sauvegarde de l'index TF-IDF
+│   ├── atlas.db                     # Base de données SQLite
+│   ├── backups/                     # Sauvegardes de la base de données
+│   └── index/                       # Sauvegarde de l'index TF-IDF
 │
-├── backups/                        # Sauvegardes de la base de données
-├── exports/                        # Fichiers exportés (CSV/JSON)
+├── assets/                          # Ressources graphiques
+│   └── icons/                       # Icônes
+│
+├── requirements.txt                 # Dépendances Windows
+├── requirements-android.txt         # Dépendances Android
+├── buildozer.spec                   # Configuration Buildozer (Android)
+├── build_windows.bat                # Script de build Windows (.exe)
+├── build_apk.bat                    # Script de build Android (.apk)
+└── build_apk_wsl.sh                 # Script de build Android (WSL/Linux)
 ```
 
 ---
@@ -131,7 +182,8 @@ atlas/
 | Technologie | Version | Rôle |
 |-------------|---------|------|
 | **Python** | 3.10+ | Langage principal |
-| **CustomTkinter** | ≥5.2.0 | Interface graphique moderne (mode sombre) |
+| **CustomTkinter** | ≥5.2.0 | Interface graphique Windows (mode sombre) |
+| **Kivy** | ≥2.2.0 | Interface graphique Android |
 | **scikit-learn** | ≥1.3.0 | Vectorisation TF-IDF et similarité cosinus |
 | **NLTK** | ≥3.8.0 | Tokenisation et stemming (Snowball) |
 | **SQLite** | — | Base de données locale |
@@ -142,6 +194,30 @@ atlas/
 ---
 
 ## Architecture
+
+### Séparation des couches
+
+L'architecture suit le principe de séparation des responsabilités :
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Interface Utilisateur                 │
+│         windows/ (CustomTkinter)  │  android/ (Kivy)    │
+├─────────────────────────────────────────────────────────┤
+│                    Logique Métier                        │
+│                    core/ (Partagé)                       │
+│         preprocessing → preprocessor → engine            │
+│                         indexer                          │
+├─────────────────────────────────────────────────────────┤
+│                    Accès aux Données                     │
+│                    database/ (Partagé)                   │
+│                    connection → database                 │
+├─────────────────────────────────────────────────────────┤
+│                    Utilitaires                           │
+│                    utils/ (Partagé)                      │
+│                    datetime                              │
+└─────────────────────────────────────────────────────────┘
+```
 
 ### Pipeline de recherche
 
@@ -192,7 +268,7 @@ Requête utilisateur
 ### Recherche simple
 
 1. Ouvrir l'application
-2. Saisir une requête dans la barre de recherche (Accueil ou Recherche)
+2. Saisir une requête dans la barre de recherche
 3. Appuyer sur **Entrée** ou cliquer sur **Rechercher**
 4. Les résultats s'affichent avec un score de pertinence et des extraits surlignés
 
@@ -229,6 +305,26 @@ Requête utilisateur
 3. Cliquer sur **Exporter**
 4. Choisir l'emplacement de sauvegarde
 
+### Sauvegarde
+
+1. Naviguer vers **Sauvegarde**
+2. Saisir un nom pour identifier la sauvegarde
+3. Cliquer sur **Sauvegarder**
+4. Pour restaurer : cliquer sur **Restaurer** à côté de la sauvegarde souhaitée
+5. Pour supprimer : cliquer sur **Supprimer** à côté de la sauvegarde
+
+### Réinitialisation de la base de données
+
+Pour repartir à zéro avec vos propres documents :
+
+1. Naviguer vers **Réinitialiser**
+2. Voir l'état actuel (nombre de documents, passages, termes)
+3. Choisir une option :
+   - **Réinitialiser tout** — Supprime documents, index, vocabulaire et historique
+   - **Supprimer les documents** — Supprime documents et index, conserve l'historique
+4. Confirmer l'action
+5. Importer vos propres documents via **Ajouter un document**
+
 ---
 
 ## Exemples de recherches
@@ -259,7 +355,7 @@ Un mot fréquent dans un document mais rare dans le corpus aura un score TF-IDF 
 
 ### Similarité cosinus
 
-Mesure l'angle entre le vecteur de la requête et chaque vecteur document. Le score varie de **0** (aucune similarité) à **1** (identique). Formule :
+Mesure l'angle entre le vecteur de la requête et chaque vecteur document. Le score varie de **0** (aucune similarité) à **1** (identique).
 
 ```
 similarité = (A · B) / (‖A‖ × ‖B‖)
@@ -268,6 +364,39 @@ similarité = (A · B) / (‖A‖ × ‖B‖)
 ### Découpage en passages (Chunking)
 
 Les documents sont découpés en passages de **500 mots** avec un chevauchement de **50 mots** pour maintenir le contexte entre les segments.
+
+### Gestion multiplateforme
+
+La configuration centralisée dans `config.py` gère automatiquement les chemins selon la plateforme :
+
+- **Windows/Linux/macOS** : Chemins basés sur `Path(__file__).parent`
+- **Android** : Chemins basés sur `android.storage.app_storage_path()`
+
+---
+
+## Build
+
+### Windows (.exe)
+
+```batch
+build_windows.bat
+```
+
+L'exécutable sera généré dans `dist/Atlas.exe`.
+
+### Android (.apk)
+
+```bash
+# Via WSL
+wsl -d Ubuntu -- bash -c "cd ~/atlas_build && ~/.local/bin/buildozer android debug"
+```
+
+Ou directement depuis Windows :
+```batch
+build_apk.bat
+```
+
+L'APK sera généré dans `bin/atlas-debug.apk`.
 
 ---
 
@@ -285,6 +414,5 @@ Les documents sont découpés en passages de **500 mots** avec un chevauchement 
 
 ## Licence
 
-Projet réalisé dans le cadre académique.
+Projet réalisé dans le cadre académique — Groupe 5.
 Usage éducatif.
- 
