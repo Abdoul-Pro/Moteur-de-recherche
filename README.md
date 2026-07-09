@@ -1,10 +1,10 @@
-# Atlas
+# ATLAS
 
-**Moteur de recherche de documents historiques — Multiplateforme**
+**Moteur de recherche de textes historiques**
 
-Atlas est une application multiplateforme permettant d'indexer, rechercher et consulter des documents historiques. Elle utilise l'algorithme **TF-IDF** couplé à la **similarité cosinus** pour retrouver les passages les plus pertinents dans un corpus de documents.
+ATLAS est une application de bureau permettant d'indexer, rechercher et consulter des documents historiques. Elle utilise l'algorithme **TF-IDF** couplé à la **similarité cosinus** pour retrouver les passages les plus pertinents dans un corpus de documents.
 
-Supporte **Windows** (CustomTkinter) et **Android** (Kivy) avec une seule base de code Python.
+Le nom ATLAS symbolise la connaissance, l'orientation et la découverte — un outil qui guide les chercheurs vers les informations historiques.
 
 ---
 
@@ -15,64 +15,14 @@ Supporte **Windows** (CustomTkinter) et **Android** (Kivy) avec une seule base d
 | **Recherche simple** | Requête en langage naturel avec résultats classés par pertinence |
 | **Recherche avancée** | Filtres par période historique, région, auteur, type de document et plage d'années |
 | **Import de documents** | Import de fichiers `.txt`, `.pdf`, `.docx` avec extraction automatique du contenu |
-| **Saisie manuelle** | Création directe de documents avec métadonnées |
-| **Indexation** | Indexation TF-IDF en temps réel avec barre de progression et journal |
-| **Analyse** | Tableau de bord avec métriques, graphiques et distribution des documents |
-| **Historique** | Consultation de toutes les recherches effectuées |
+| **Saisie manuelle** | Création directe de documents avec métadonnées (titre, auteur, source, période, région) |
+| **Indexation** | Indexation TF-IDF en arrière-plan avec barre de progression et journal en temps réel |
+| **Tableau de bord** | Métriques globales, distribution des documents, requêtes fréquentes |
+| **Historique** | Consultation de toutes les recherches effectuées avec horodatage |
 | **Export** | Export CSV ou JSON avec choix de l'emplacement de sauvegarde |
-| **Sauvegarde** | Gestion complète des sauvegardes : création avec nom personnalisé, restauration, suppression |
-| **Réinitialiser** | Vider la base de données et repartir à zéro pour des recherches personnelles |
+| **Sauvegarde** | Gestion complète : création, restauration et suppression de sauvegardes |
+| **Réinitialisation** | Réinitialisation totale ou partielle de la base de données |
 | **À propos** | Informations sur l'équipe et les technologies utilisées |
-
----
-
-## Aperçu de l'interface
-
-### Windows (CustomTkinter)
-
-```
-┌──────────────┬────────────────────────────────────────────┐
-│              │  🔍 Rechercher...                    [Go]  │
-│  🧭 Atlas    │────────────────────────────────────────────│
-│              │                                            │
-│  🏠 Accueil  │  #  Titre du document             85.5%  │
-│  🔍 Recherche│     Extrait contenant les mots-clés...     │
-│  🔬 Avancée  │     Auteur · Période · Région              │
-│  📊 Analyse  │────────────────────────────────────────────│
-│  📋 Historiq │  #  Deuxième résultat              72.3%  │
-│  ⚙️ Indexat. │     Autre extrait pertinent...             │
-│  📄 Importer │     Auteur · Période · Région              │
-│  📤 Export   │                                            │
-│  💾 Sauveg.  │                                            │
-│  🗑️ Réinit.  │                                            │
-│  ℹ️ À propos │                                            │
-│──────────────│  ← 1  2  3  →                              │
-│ ● Opérationnel│                                            │
-└──────────────┴────────────────────────────────────────────┘
-```
-
-### Android (Kivy)
-
-```
-┌─────────────────────────────────┐
-│  🧭 Atlas                       │
-│  Explorer l'histoire.           │
-│─────────────────────────────────│
-│  [Rechercher...        ] [🔍]   │
-│─────────────────────────────────│
-│  📚 Documents     📄 Passages   │
-│       66              126       │
-│─────────────────────────────────│
-│  📋 Recherches    ⏱️ Temps moy. │
-│       0               0 ms     │
-│─────────────────────────────────│
-│  [🔍 Recherche]  [🔬 Avancée]   │
-│  [📊 Analyse]    [📋 Historique]│
-│  [⚙️ Indexation] [💾 Sauvegarde]│
-│  [📄 Importer]   [📤 Export]    │
-│  [🗑️ Réinit.]    [ℹ️ À propos]  │
-└─────────────────────────────────┘
-```
 
 ---
 
@@ -83,7 +33,7 @@ Supporte **Windows** (CustomTkinter) et **Android** (Kivy) avec une seule base d
 - **Python 3.10** ou supérieur
 - **pip** (gestionnaire de paquets)
 
-### Windows
+### Installation
 
 ```bash
 # 1. Cloner le dépôt
@@ -97,21 +47,17 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### Android
+### Exécutable (.exe)
 
+Un exécutable autonome est disponible dans `dist/Atlas.exe`.
+
+Pour créer l'exécutable :
 ```bash
-# Via WSL (Windows Subsystem for Linux)
-wsl --install -d Ubuntu
-# Après redémarrage, dans Ubuntu :
-sudo apt update && sudo apt install -y python3 python3-pip
-pip3 install buildozer
-buildozer android debug
+pip install pyinstaller
+python -m PyInstaller --onefile --windowed --name Atlas main.py
 ```
 
-Ou exécuter directement depuis Windows :
-```batch
-build_apk.bat
-```
+> **Note** : La première exécution de l'exe prend quelques secondes (extraction des modules Python). Les données sont stockées dans `%LOCALAPPDATA%\Atlas\`.
 
 ---
 
@@ -119,77 +65,71 @@ build_apk.bat
 
 ```
 atlas/
-├── main.py                          # Point d'entrée (détection Windows/Android)
-├── config.py                        # Configuration centralisée (chemins, constantes)
+├── main.py                     # Point d'entrée
+├── config.py                   # Configuration centralisée (chemins, constantes)
+├── requirements.txt            # Dépendances Python
+├── README.md                   # Cette documentation
 │
-├── core/                            # Logique métier (partagée)
-│   ├── preprocessing.py             # Nettoyage, tokenisation, stemming (NLP)
-│   ├── preprocessor.py              # Préprocesseur NLTK
-│   ├── indexer.py                   # Indexation TF-IDF avec scikit-learn
-│   └── engine.py                    # Moteur de recherche DB-based
+├── core/                       # Logique métier
+│   ├── preprocessing.py        # Nettoyage, tokenisation, stemming (NLP)
+│   ├── preprocessor.py         # Préprocesseur NLTK (wrapper)
+│   ├── indexer.py              # Indexeur TF-IDF et DocumentIndexer
+│   └── engine.py               # Moteur de recherche DB-based
 │
-├── database/                        # Couche d'accès aux données (partagée)
-│   ├── connection.py                # Gestionnaire de connexion SQLite
-│   └── database.py                  # Schéma SQL, CRUD et réinitialisation
+├── database/                   # Couche d'accès aux données
+│   ├── __init__.py             # Réexport des fonctions publiques
+│   ├── connection.py           # Gestionnaire de connexion SQLite
+│   └── database.py             # Schéma SQL, CRUD et réinitialisation
 │
-├── utils/                           # Utilitaires (partagés)
-│   └── datetime.py                  # Utilitaires de date/heure
-│
-├── windows/                         # Interface Windows (CustomTkinter)
-│   ├── app.py                       # Application principale Windows
-│   ├── theme.py                     # Thème et couleurs
+├── windows/                    # Interface graphique (CustomTkinter)
+│   ├── app.py                  # Application principale (AtlasApp)
+│   ├── theme.py                # Thème : couleurs, polices, helpers
 │   ├── components/
-│   │   ├── sidebar.py               # Barre latérale de navigation
-│   │   └── widgets.py               # SearchBar, ResultCard, Pagination
+│   │   ├── sidebar.py          # Barre latérale de navigation
+│   │   └── widgets.py          # SearchBar, ResultCard, StatCard, Pagination
 │   └── pages/
-│       ├── home.py                  # Page d'accueil
-│       ├── search.py                # Page de résultats de recherche
-│       ├── advanced.py              # Recherche avancée avec filtres
-│       ├── analytics.py             # Tableau d'analyse
-│       ├── history.py               # Historique des recherches
-│       ├── indexing.py              # Page d'indexation
-│       ├── import_doc.py            # Import de documents
-│       ├── document.py              # Consultation d'un document
-│       ├── sauvegarde.py            # Gestion des sauvegardes
-│       ├── reset_db.py              # Réinitialisation de la base
-│       └── about.py                 # Page À propos
+│       ├── home.py             # Page d'accueil
+│       ├── search.py           # Page de résultats de recherche
+│       ├── advanced.py         # Recherche avancée avec filtres
+│       ├── analytics.py        # Tableau de bord analytique
+│       ├── history.py          # Historique des recherches
+│       ├── indexing.py         # Page d'indexation
+│       ├── import_doc.py       # Import de documents
+│       ├── document.py         # Visionneuse de document
+│       ├── sauvegarde.py       # Gestion des sauvegardes
+│       ├── reset_db.py         # Réinitialisation de la base
+│       └── about.py            # Page À propos
 │
-├── android/                         # Interface Android (Kivy)
-│   ├── main.py                      # Application principale Android
-│   ├── theme.py                     # Thème et couleurs
-│   └── screens/                     # Écrans Android
+├── utils/                      # Utilitaires
+│   └── datetime.py             # Fonctions de formatage date/heure
 │
 ├── data/
-│   ├── atlas.db                     # Base de données SQLite
-│   ├── backups/                     # Sauvegardes de la base de données
-│   └── index/                       # Sauvegarde de l'index TF-IDF
+│   ├── atlas.db                # Base de données SQLite
+│   └── backups/                # Sauvegardes de la base de données
 │
-├── assets/                          # Ressources graphiques
-│   └── icons/                       # Icônes
+├── assets/                     # Ressources graphiques
+│   └── icons/                  # Icônes (logo, navigation)
 │
-├── requirements.txt                 # Dépendances Windows
-├── requirements-android.txt         # Dépendances Android
-├── buildozer.spec                   # Configuration Buildozer (Android)
-├── build_windows.bat                # Script de build Windows (.exe)
-├── build_apk.bat                    # Script de build Android (.apk)
-└── build_apk_wsl.sh                 # Script de build Android (WSL/Linux)
+└── dist/
+    └── Atlas.exe               # Exécutable Windows compilé
 ```
 
 ---
 
 ## Technologies
 
-| Technologie | Version | Rôle |
-|-------------|---------|------|
-| **Python** | 3.10+ | Langage principal |
-| **CustomTkinter** | ≥5.2.0 | Interface graphique Windows (mode sombre) |
-| **Kivy** | ≥2.2.0 | Interface graphique Android |
-| **scikit-learn** | ≥1.3.0 | Vectorisation TF-IDF et similarité cosinus |
-| **NLTK** | ≥3.8.0 | Tokenisation et stemming (Snowball) |
-| **SQLite** | — | Base de données locale |
-| **NumPy** | ≥1.24.0 | Calculs numériques |
-| **PyPDF2** | ≥3.0.0 | Extraction de texte depuis PDF |
-| **python-docx** | ≥0.8.11 | Extraction de texte depuis Word |
+| Technologie | Rôle |
+|-------------|------|
+| **Python** | Langage principal |
+| **SQLite** | Base de données locale (6 tables, 6 index) |
+| **NLTK** | Tokenisation, stemming Snowball, mots vides français |
+| **Scikit-Learn** | Vectorisation TF-IDF, matrices creuses |
+| **CustomTkinter** | Interface graphique moderne (mode sombre) |
+| **Pillow** | Gestion des images (logo, icônes) |
+| **PyPDF2** | Extraction de texte depuis PDF |
+| **python-docx** | Extraction de texte depuis Word |
+| **Joblib** | Sérialisation de l'index TF-IDF |
+| **PyInstaller** | Compilation en exécutable Windows |
 
 ---
 
@@ -197,26 +137,23 @@ atlas/
 
 ### Séparation des couches
 
-L'architecture suit le principe de séparation des responsabilités :
-
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    Interface Utilisateur                 │
-│         windows/ (CustomTkinter)  │  android/ (Kivy)    │
-├─────────────────────────────────────────────────────────┤
-│                    Logique Métier                        │
-│                    core/ (Partagé)                       │
-│         preprocessing → preprocessor → engine            │
-│                         indexer                          │
-├─────────────────────────────────────────────────────────┤
-│                    Accès aux Données                     │
-│                    database/ (Partagé)                   │
-│                    connection → database                 │
-├─────────────────────────────────────────────────────────┤
-│                    Utilitaires                           │
-│                    utils/ (Partagé)                      │
-│                    datetime                              │
-└─────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│       Couche Présentation               │
+│       windows/ (CustomTkinter)          │
+├─────────────────────────────────────────┤
+│       Couche Traitement                 │
+│       core/                             │
+│   preprocessing → preprocessor → engine │
+│               indexer                   │
+├─────────────────────────────────────────┤
+│       Couche Données                    │
+│       database/                         │
+│       connection → database             │
+├─────────────────────────────────────────┤
+│       Utilitaires                       │
+│       utils/ (datetime)                 │
+└─────────────────────────────────────────┘
 ```
 
 ### Pipeline de recherche
@@ -226,7 +163,7 @@ Requête utilisateur
        │
        ▼
 ┌─────────────┐
-│ Prétraitement│  ← Nettoyage, tokenisation, stemming
+│ Prétraitement│  ← Nettoyage, tokenisation, stemming Snowball
 └──────┬──────┘
        │
        ▼
@@ -236,13 +173,13 @@ Requête utilisateur
        │
        ▼
 ┌─────────────────┐
-│ Similarité       │  ← Calcul cosinus avec tous les documents
+│ Similarité       │  ← Calcul cosinus avec les passages stockés
 │ cosinus          │
 └──────┬──────────┘
        │
        ▼
 ┌─────────────┐
-│ Classement   │  ← Tri par score de pertinence
+│ Classement   │  ← Tri par score de pertinence (50%-95%)
 │ + Filtres    │  ← Application des filtres optionnels
 └──────┬──────┘
        │
@@ -250,16 +187,16 @@ Requête utilisateur
   Résultats affichés
 ```
 
-### Base de données
+### Base de données SQLite
 
 | Table | Description |
 |-------|-------------|
-| `documents` | Documents historiques avec métadonnées |
-| `chunks` | Passages découpés pour l'indexation |
-| `tfidf_index` | Index inversé des valeurs TF-IDF |
+| `documents` | Documents historiques avec métadonnées (titre, auteur, période, région, contenu) |
+| `chunks` | Passages découpés (~100 mots) pour l'indexation |
+| `tfidf_index` | Index inversé reliant chaque passage aux termes TF-IDF |
 | `vocabulary` | Vocabulaire avec fréquence documentaire |
-| `search_history` | Historique des recherches effectuées |
-| `index_stats` | Statistiques globales d'indexation |
+| `search_history` | Historique des recherches (requête, filtres, résultats, temps) |
+| `index_stats` | Statistiques globales (nb documents, chunks, termes, dernière indexation) |
 
 ---
 
@@ -287,7 +224,7 @@ Requête utilisateur
 3. Cliquer sur **Importer et indexer**
 
 **Saisie manuelle :**
-1. Remplir les champs (Titre obligatoire, Auteur, Source, etc.)
+1. Remplir les champs (Titre obligatoire, Auteur, Source, Période, Région, Langue)
 2. Saisir le contenu dans la zone de texte
 3. Cliquer sur **Importer et indexer**
 
@@ -295,7 +232,7 @@ Requête utilisateur
 
 1. Naviguer vers **Indexation**
 2. Cliquer sur **Démarrer l'indexation**
-3. Suivre la progression en temps réel
+3. Suivre la progression en temps réel (barre + journal)
 4. Les statistiques se mettent à jour automatiquement
 
 ### Export
@@ -315,10 +252,8 @@ Requête utilisateur
 
 ### Réinitialisation de la base de données
 
-Pour repartir à zéro avec vos propres documents :
-
 1. Naviguer vers **Réinitialiser**
-2. Voir l'état actuel (nombre de documents, passages, termes)
+2. Voir l'état actuel (nombre de documents, passages, termes, recherches)
 3. Choisir une option :
    - **Réinitialiser tout** — Supprime documents, index, vocabulaire et historique
    - **Supprimer les documents** — Supprime documents et index, conserve l'historique
@@ -327,76 +262,42 @@ Pour repartir à zéro avec vos propres documents :
 
 ---
 
-## Exemples de recherches
-
-| Requête | Résultats |
-|---------|-----------|
-| `Empire du Mali` | Documents sur l'histoire et l'expansion de l'Empire du Mali |
-| `Thomas Sankara` | Documents relatifs à la révolution burkinabè |
-| `AES` | Documents concernant l'Alliance des États du Sahel |
-| `Mossi` | Documents sur les royaumes mossi |
-| `Samory Touré` | Documents sur la résistance africaine à la colonisation |
-| `Burkina Faso` | Documents sur l'histoire politique et sociale |
-| `Colonisation Afrique Ouest` | Documents sur la période coloniale |
-| `Indépendance` | Documents relatifs aux indépendances africaines |
-
----
-
 ## Notes techniques
 
 ### TF-IDF
 
-**Term Frequency–Inverse Document Frequency** mesure l'importance d'un mot dans un document par rapport au corpus entier :
+**Term Frequency–Inverse Document Frequency** mesure l'importance d'un mot dans un document par rapport au corpus :
 
-- **TF** (fréquence du terme) : nombre d'occurrences du mot dans le document
-- **IDF** (fréquence inverse) : `log(N / df)` où `N` = nombre total de documents et `df` = nombre de documents contenant le mot
+- **TF** : nombre d'occurrences du mot dans le passage / nombre total de mots
+- **IDF** : `log((N+1) / (df+1)) + 1` où N = nombre total de passages, df = nombre de passages contenant le mot
+- **Score** : `TF × IDF`
 
-Un mot fréquent dans un document mais rare dans le corpus aura un score TF-IDF élevé.
+Un mot fréquent dans un passage mais rare dans le corpus aura un score TF-IDF élevé.
 
 ### Similarité cosinus
 
-Mesure l'angle entre le vecteur de la requête et chaque vecteur document. Le score varie de **0** (aucune similarité) à **1** (identique).
+Mesure l'angle entre le vecteur de la requête et chaque vecteur de passage. Les scores sont normalisés entre **50%** et **95%** pour un affichage intuitif.
 
-```
-similarité = (A · B) / (‖A‖ × ‖B‖)
-```
+### Prétraitement NLP
 
-### Découpage en passages (Chunking)
-
-Les documents sont découpés en passages de **500 mots** avec un chevauchement de **50 mots** pour maintenir le contexte entre les segments.
-
-### Gestion multiplateforme
-
-La configuration centralisée dans `config.py` gère automatiquement les chemins selon la plateforme :
-
-- **Windows/Linux/macOS** : Chemins basés sur `Path(__file__).parent`
-- **Android** : Chemins basés sur `android.storage.app_storage_path()`
+Le pipeline de traitement suit ces étapes :
+1. **Nettoyage** : suppression HTML, normalisation Unicode (NFKD), encodage ASCII
+2. **Tokenisation** : découpage en mots via NLTK `word_tokenize`
+3. **Filtrage** : suppression des mots vides, mots courts (< 2 lettres), chiffres
+4. **Stemming** : réduction à la racine avec Snowball (français)
 
 ---
 
-## Build
+## Thème visuel
 
-### Windows (.exe)
-
-```batch
-build_windows.bat
-```
-
-L'exécutable sera généré dans `dist/Atlas.exe`.
-
-### Android (.apk)
-
-```bash
-# Via WSL
-wsl -d Ubuntu -- bash -c "cd ~/atlas_build && ~/.local/bin/buildozer android debug"
-```
-
-Ou directement depuis Windows :
-```batch
-build_apk.bat
-```
-
-L'APK sera généré dans `bin/atlas-debug.apk`.
+| Élément | Couleur |
+|---------|---------|
+| Fond principal | `#0a1628` (bleu nuit) |
+| Sidebar | `#0c1d36` |
+| Cartes | `#0f2042` |
+| Accent principal | `#d4a843` (doré) |
+| Texte principal | `#ffffff` |
+| Texte secondaire | `#8899b3` |
 
 ---
 
@@ -410,9 +311,8 @@ L'APK sera généré dans `bin/atlas-debug.apk`.
 | **SAWADOGO Djemila** | TF-IDF et moteur de recherche |
 | **DICKO Idrissa Barkey Kalilou** | Interface graphique CustomTkinter |
 
----
+**Professeur encadrant** : Dr Arthur SAWADOGO
 
-## Licence
+**Année académique** : 2025–2026
 
-Projet réalisé dans le cadre académique — Groupe 5.
-Usage éducatif.
+**Université** : Université Joseph Ki-Zerbo — IFOAD
